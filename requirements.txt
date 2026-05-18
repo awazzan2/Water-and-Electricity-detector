@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy[asyncio]
+asyncpg
+psycopg2-binary
+alembic
+apscheduler
+python-dotenv
+pydantic
+sse-starlette

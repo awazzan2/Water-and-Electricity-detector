@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electricity History</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-deep: #0f0f1a;
+      --bg-panel: #1a1a2e;
+      --accent: #ffd700;
+      --accent-muted: rgba(255, 215, 0, 0.15);
+      --text-primary: #f0f0f5;
+      --text-muted: #8b8ba3;
+      --radius-lg: 16px;
+      --radius-pill: 50px;
+      --transition: 0.4s ease;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-header {
+      padding: 1.5rem 2rem;
+      background: linear-gradient(180deg, var(--bg-panel) 0%, transparent 100%);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.12);
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, #4a4520 0%, #6b5f18 50%, #8a7a22 100%);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      transition: filter var(--transition), transform 0.25s ease;
+    }
+
+    .btn-back:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+
+    .btn-back svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    h1 .accent-bar {
+      width: 4px;
+      height: 1.4rem;
+      background: var(--accent);
+      border-radius: 2px;
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .placeholder-card {
+      background: var(--bg-panel);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 215, 0, 0.12);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .placeholder-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 1.25rem;
+      color: var(--accent);
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
+    }
+
+    .placeholder-card h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .placeholder-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--accent-muted);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: var(--radius-pill);
+    }
+
+    .records-table {
+      width: 100%;
+      background: var(--bg-panel);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 215, 0, 0.12);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+    }
+
+    .records-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .records-table thead {
+      background: rgba(255, 215, 0, 0.08);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.12);
+    }
+
+    .records-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+    }
+
+    .records-table td {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+      color: var(--text-primary);
+    }
+
+    .records-table tbody tr:hover {
+      background: rgba(255, 215, 0, 0.04);
+      transition: background var(--transition);
+    }
+
+    .records-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .timestamp {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    .error {
+      background: rgba(255, 77, 77, 0.1);
+      border: 1px solid rgba(255, 77, 77, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      color: #ff6b6b;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .page-header {
+        padding: 1rem;
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
+      }
+
+      h1 {
+        font-size: 1.25rem;
+      }
+
+      main {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <div class="header-inner">
+      <a href="index.html" class="btn-back" aria-label="Back to dashboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </a>
+      <h1><span class="accent-bar" aria-hidden="true"></span>Electricity History</h1>
+    </div>
+  </header>
+
+  <main>
+    <div id="content"></div>
+  </main>
+
+  <script>
+    async function loadElectricityRecords() {
+      const contentDiv = document.getElementById('content');
+      
+      try {
+        contentDiv.innerHTML = '<div class="loading">Loading records...</div>';
+        
+        const response = await fetch('/electricity/records');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        
+        if (!data.items || data.items.length === 0) {
+          contentDiv.innerHTML = `
+            <article class="placeholder-card">
+              <svg class="placeholder-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+              </svg>
+              <h2>No records yet</h2>
+              <p>Electricity records will appear here once the system starts tracking usage.</p>
+            </article>
+          `;
+          return;
+        }
+
+        const tableHTML = `
+          <div class="records-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Time On</th>
+                  <th>Time Off</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.items.map(record => {
+                  const timeOn = new Date(record.time_on);
+                  const timeOff = record.time_off ? new Date(record.time_off) : null;
+                  const duration = timeOff ? `${Math.round((timeOff - timeOn) / 1000 / 60)} min` : 'Ongoing';
+                  
+                  return `
+                    <tr>
+                      <td>#${record.id}</td>
+                      <td><span class="timestamp">${timeOn.toLocaleString()}</span></td>
+                      <td><span class="timestamp">${timeOff ? timeOff.toLocaleString() : '—'}</span></td>
+                      <td>${duration}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+        
+        contentDiv.innerHTML = tableHTML;
+      } catch (error) {
+        console.error('Error loading records:', error);
+        contentDiv.innerHTML = `
+          <div class="error">
+            <strong>Error loading records:</strong> ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // Load records when page loads
+    document.addEventListener('DOMContentLoaded', loadElectricityRecords);
+  </script>
+</body>
+</html>
