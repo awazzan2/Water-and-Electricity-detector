@@ -13,8 +13,8 @@ from sse_starlette.sse import EventSourceResponse
 from dotenv import load_dotenv
 
 from database import engine
-from routers import electricity, water
-from routers.RecieveElecWater import router as receive_router
+import electricity, water
+from RecieveElecWater import router as receive_router
 from scheduler import init_sensor_states, start_scheduler, stop_scheduler
 from sse_manager import sse_manager
 
@@ -97,7 +97,7 @@ async def events(request: Request):
     return EventSourceResponse(event_generator())
 
 
-frontend_dir = BASE_DIR.parent
+frontend_dir = BASE_DIR
 if frontend_dir.exists():
     app.mount(
         "/",
