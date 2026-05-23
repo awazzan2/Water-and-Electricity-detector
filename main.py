@@ -51,8 +51,9 @@ def run_migrations() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Skip migrations on startup - they can be run manually
-    logger.warning("Skipping automatic migrations on startup. Run migrations manually if needed.")
+    if os.getenv("RENDER"):  # only run migrations on Render
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, run_migrations)
     
     init_sensor_states()
     start_scheduler()
